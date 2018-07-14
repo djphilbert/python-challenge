@@ -3,30 +3,37 @@ import os
 # Module for reading CSV's
 import csv
 
-csvpath = os.path.join('Resources', 'budget_data.csv')
+csvpath = os.path.join( 'Resources', 'election_data.csv')
 
 # # Method 1: Plain Reading of CSVs
+cand_votes = {} 
 counter = 0
-profits = 0
-max = 0
-min = 0
-first_num = 1154293
-last_num = 883934
+percent_each = 0
+
 with open(csvpath, newline="") as csvfile:
    csvreader = csv.reader(csvfile, delimiter=",")
    header = next(csvreader)
 
-   for x in csvreader:
-       counter += 1 # Total number of minths in data
-       profits += int(x[1]) # Total net Amount over entire period
-       if max < int(x[1]):
-           max = int(x[1])
-       if min > int(x[1]):
-           min = int(x[1])
-       avg = (last_num - first_num) / 40
+   for vote in csvreader:
+       counter += 1
+       if (vote[2]) in cand_votes.keys():
+           cand_votes[vote[2]] += 1
+       else:
+           cand_votes[vote[2]] = 1
 
-print("Total number of months " + str(counter))
-print("Profits are " + str(profits))
-print("The maximun number is " + str(max))
-print("The minimun number is  " + str(min))
-print(avg)
+percent = []
+for key in cand_votes:
+   percent_each = cand_votes[key]/counter *100
+   percent.append(f"{key}:{percent_each}%")
+winner = max(cand_votes, key=cand_votes.get)
+print(cand_votes)
+print(counter)
+print(percent)
+print(winner)
+
+text_file = open("PypollOutput.txt", "w")
+text_file.write("Total votes " + str(cand_votes))
+text_file.write("Total Counter" + str(counter))
+text_file.write("Percentage " + str(percent))
+text_file.write("Winner is " + str(winner))
+text_file.close()
